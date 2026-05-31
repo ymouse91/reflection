@@ -11,9 +11,11 @@
 *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:#1c1c1c} header{position:sticky;top:0;z-index:5;background:var(--accent);color:white;padding:10px 12px;box-shadow:0 2px 8px #0003} h1{margin:0;font-size:22px}.sub{font-size:13px;opacity:.85} main{max-width:1060px;margin:auto;padding:12px}.bar,.panel{background:var(--panel);border:1px solid #d6c786;border-radius:14px;padding:10px;margin:10px 0;box-shadow:0 2px 8px #0001}.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,select{font:inherit;border-radius:10px;border:1px solid #b7aa78;background:white;padding:8px 10px}button{cursor:pointer}button.primary{background:#2e7957;color:white;border-color:#1f6547}button.danger{background:#8e2f2f;color:white;border-color:#722}.stock{display:flex;gap:8px;flex-wrap:wrap}.piece{min-width:42px;height:42px;border:2px solid #3f455e;border-radius:8px;background:#5d6274;color:white;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}.piece.sel{outline:4px solid #f5c542}.boardWrap{overflow:auto;padding:8px}.board{display:grid;grid-template-columns:42px repeat(var(--n),52px) 42px;grid-template-rows:42px repeat(var(--n),52px) 42px;width:max-content;margin:auto;gap:0}.cell,.edge,.corner{width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);font-weight:700}.corner{width:42px;height:42px;border:none}.edge{width:42px;height:42px;border:2px solid #e36b64;background:var(--edge);border-radius:12px;margin:0;font-size:18px;position:relative}.edge.top,.edge.bottom{width:52px}.edge.ok{border-color:#e36b64}.edge.bad{border-color:#e36b64;background:var(--edgeBad)}.edge.same{background:var(--edgeSame)}.edge.hole{background:var(--edgeHole)}.edge.solved{border-color:#1d8f55;box-shadow:inset 0 0 0 2px #1d8f55}.edge.selected{box-shadow:0 0 0 4px var(--start);z-index:2}.edge.solved.selected{box-shadow:inset 0 0 0 2px #1d8f55,0 0 0 4px var(--start);z-index:2}.edge.exit{box-shadow:0 0 0 4px var(--out);z-index:2}.edge .tag{position:absolute;left:50%;transform:translateX(-50%);bottom:-18px;font-size:10px;background:#fff;border:1px solid #aaa;border-radius:6px;padding:0 3px;color:#222}.edge.bottom .tag{top:-18px;bottom:auto}.cell{background:var(--grid);color:white;font-size:30px;position:relative}.cell.locked:after{content:'🔒';font-size:14px;position:absolute;right:2px;bottom:1px}.cell.path{box-shadow:inset 0 0 0 4px #65ff69;background:#566b64}.cell.solutionPath{box-shadow:inset 0 0 0 4px #45a3ff;background:#55677d}.cell.bothPath{box-shadow:inset 0 0 0 4px #65ff69, inset 0 0 0 8px #45a3ff;background:#5b6470}.cell.path:before,.cell.solutionPath:before,.cell.bothPath:before{content:attr(data-step);position:absolute;right:3px;top:2px;font-size:12px;color:#eaffef}.cell.solutionPath:before{color:#dff0ff}.cell.bothPath:before{content:attr(data-step)}.cell.path:after,.cell.solutionPath:after,.cell.bothPath:after{content:attr(data-arrow);position:absolute;left:3px;bottom:0;font-size:15px;color:#eaffef}.cell.solutionPath:after{color:#dff0ff}.black{font-size:28px}.warp{font-size:30px}.msg{font-weight:700}.okText{color:var(--ok)}.badText{color:var(--warn)}details{margin-top:8px}.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}.legend div{background:#fffdf0;border:1px solid #e0d7aa;border-radius:10px;padding:8px}.foot{font-size:12px;color:#555;line-height:1.35}.ray{font-weight:700;background:#fffdf0;border:1px solid #e0d7aa;border-radius:10px;padding:8px;margin-top:8px}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 4px 16px #0005;z-index:10;display:none}.toast.show{display:block}@media(max-width:650px){.board{grid-template-columns:36px repeat(var(--n),44px) 36px;grid-template-rows:36px repeat(var(--n),44px) 36px}.cell{width:44px;height:44px}.edge{width:36px;height:36px;font-size:16px}.edge.top,.edge.bottom{width:44px}.corner{width:36px;height:36px}.piece{min-width:38px;height:38px;font-size:24px}}
 .qualityDetails{font-weight:700}.qualityDetails summary{cursor:pointer;list-style:none}.qualityDetails summary::-webkit-details-marker{display:none}.qualityDetails .arrow{display:inline-block;width:1.1em}.qualityDetails[open] .arrow{transform:rotate(90deg)}.qualityBody{margin-top:6px;font-weight:600;line-height:1.35}
 .cell.locked:after{content:none}.lockMark{position:absolute;right:2px;bottom:1px;font-size:14px;line-height:1;z-index:3;pointer-events:none}
+.stock{margin-top:8px}.pieceSymbol{display:inline-block;line-height:1}.pieceSymbol.v2{transform:rotate(90deg)}
 .hidden{display:none}.menuBar{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));align-items:center}.menuBar button{width:100%;min-width:0}.menuBar .msg:empty{display:none}.menuBar .msg{grid-column:1/-1}.settingsBar{margin-top:-4px}
 @media(max-width:430px){header{padding:8px 10px}h1{font-size:20px}.sub{font-size:12px}main{padding:8px}.bar,.panel{padding:8px;margin:8px 0;border-radius:8px}.bar{gap:6px}.bar label{display:flex;align-items:center;gap:4px;font-size:14px}button,select{padding:7px 8px}.boardWrap{padding:4px;-webkit-overflow-scrolling:touch}.board{grid-template-columns:32px repeat(var(--n),40px) 32px;grid-template-rows:32px repeat(var(--n),40px) 32px}.cell{width:40px;height:40px;font-size:25px}.edge{width:32px;height:32px;font-size:14px;border-radius:8px}.edge.top,.edge.bottom{width:40px}.corner{width:32px;height:32px}.edge .tag{font-size:9px;bottom:-15px}.edge.bottom .tag{top:-15px}.piece{min-width:36px;height:36px;font-size:22px}.ray{font-size:13px}.legend{grid-template-columns:1fr}}
-@media(max-width:430px){.menuBar{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.menuBar button{padding:8px 2px;font-size:12px}.menuBar .msg{display:none}.settingsBar label{display:flex}.settingsBar{gap:6px}.settingsBar label{font-size:13px}.settingsBar select{padding:5px 6px}.settingsBar .msg{flex-basis:100%;font-size:13px}}
+@media(max-width:430px){.menuBar{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.menuBar button{padding:8px 2px;font-size:12px}.menuBar .msg{display:block;grid-column:1/-1;font-size:13px}.menuBar .msg:empty{display:none}.settingsBar{display:none}}
+@media(pointer:coarse){html,body,main,section,button,select,input,.board,.cell,.edge,.piece,.stock{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
 </style>
 </head>
 <body>
@@ -31,7 +33,7 @@
 <label>Ruudukko <select id="size"><option selected>6</option><option>8</option><option>10</option></select></label>
 <label>Esineitä <select id="items"><option selected>8</option><option>10</option><option>12</option></select></label>
 <label><input type="checkbox" id="holes" checked> mustat aukot</label>
-<label><input type="checkbox" id="warps" checked> light warp mahdollinen</label>
+<label><input type="checkbox" id="warps" checked> light warp</label>
 </section>
 <section class="panel hidden" id="helpPanel">
 <div class="legend">
@@ -42,7 +44,7 @@
 </div>
 </section>
 <section class="panel">
-<b>Valitse jäljellä oleva esine ja klikkaa ruutua.</b> Uusi klikkaus poistaa esineen ja palauttaa sen listaan. Pitkä painallus tai oikea klikkaus lukitsee ruudun muistiinpanoksi.
+<b>Valitse jäljellä oleva esine ja klikkaa ruutua.</b> <br>
 <div class="stock" id="stock"></div>
 <div id="quality" class="ray">Generaattori etsii pulmia, joissa jokainen piilotettu esine vaikuttaa useaan lasersäteeseen. Uuden pulman jälkeen näkyy myös vaikeusaste.</div>
 </section>
@@ -52,7 +54,7 @@
 const PIECES=[
  {id:'slash',label:'/',type:'mirror',draw:'╱'},
  {id:'back',label:'\\',type:'mirror',draw:'╲'},
- {id:'v2',label:'║',type:'mirror',draw:'║'},
+ {id:'v2',label:'═',type:'mirror',draw:'═'},
  {id:'h2',label:'═',type:'mirror',draw:'═'},
  {id:'square',label:'▣',type:'mirror',draw:'▣'},
  {id:'hole',label:'●',type:'hole',draw:'●'},
@@ -62,12 +64,13 @@ const PLACEABLE_IDS=['slash','back','v2','h2','square','hole'];
 const state={n:6,hidden:[],player:[],clues:[],selected:null,path:[],pathDirs:[],solutionPath:[],solutionPathDirs:[],locked:new Set(),selectedEdge:null,exitEdge:null,lastClue:null,revealed:false,quality:null};
 const $=id=>document.getElementById(id);
 function mobilePreset(){return window.matchMedia('(max-width:430px)').matches}
-function applyMobilePreset(){}
+function applyMobilePreset(){if(!mobilePreset())return;$('size').value='6';$('items').value='12';$('holes').checked=true;$('warps').checked=true}
 function setRevealButtonText(){$('revealBtn').textContent=state.revealed?'Piilota':'Ratkaisu'}
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1700)}
 function blank(n){return Array.from({length:n},()=>Array(n).fill(null))}
 function key(r,c){return r+','+c} function inb(r,c,n=state.n){return r>=0&&c>=0&&r<n&&c<n} function rand(a){return a[Math.floor(Math.random()*a.length)]}
 function cloneBoard(b){return b.map(row=>row.slice())} function piece(id){return PIECES.find(x=>x.id===id)}
+function drawPiece(el,p){let s=document.createElement('span');s.className='pieceSymbol '+p.id;s.textContent=p.draw;el.appendChild(s)}
 function reflect(dir,p){
  if(p==='slash') return [1,0,3,2][dir];
  if(p==='back') return [3,2,1,0][dir];
@@ -150,7 +153,7 @@ function renderStock(){
  const available=PIECES.filter(p=>p.id!=='warp'&&(rem[p.id]||0)>0);
  if(!available.some(p=>p.id===state.selected?.id)) state.selected=available[0]||null;
  if(!available.length){let d=document.createElement('div');d.className='ray';d.textContent='Kaikki asetettavat esineet on käytetty.';stock.appendChild(d);return}
- for(const p of available){let d=document.createElement('button');d.className='piece';d.textContent=`${p.draw}×${rem[p.id]}`;d.title=p.id;d.onclick=()=>{state.selected=p;renderStock()}; if(state.selected?.id===p.id)d.classList.add('sel');stock.appendChild(d)}
+ for(const p of available){let d=document.createElement('button');d.className='piece';drawPiece(d,p);d.append(`×${rem[p.id]}`);d.title=p.id;d.onclick=()=>{state.selected=p;renderStock()}; if(state.selected?.id===p.id)d.classList.add('sel');stock.appendChild(d)}
 }
 function clueClass(cl){return cl.status==='hole'?'hole':cl.status==='same'?'same':'ok'}
 function clueSolved(cl){if(!cl||!state.player||!state.player.length)return false;let t=trace(state.player,cl);return t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||''));}
@@ -163,7 +166,7 @@ function renderBoard(showSolution=state.revealed){let n=state.n,b=$('board');b.s
   else {el.textContent='';}
   b.appendChild(el);continue
  }
- let r=gr-1,c=gc-1;el.className='cell';let isLocked=state.locked.has(key(r,c)); if(isLocked)el.classList.add('locked');let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null; if(p){el.textContent=p.draw;if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}if(isLocked){let lock=document.createElement('span');lock.className='lockMark';lock.textContent='🔒';el.appendChild(lock)}
+ let r=gr-1,c=gc-1;el.className='cell';let isLocked=state.locked.has(key(r,c)); if(isLocked)el.classList.add('locked');let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null; if(p){drawPiece(el,p);if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}if(isLocked){let lock=document.createElement('span');lock.className='lockMark';lock.textContent='🔒';el.appendChild(lock)}
  let idx=state.path.findIndex(x=>x[0]===r&&x[1]===c);let sidx=state.solutionPath.findIndex(x=>x[0]===r&&x[1]===c); if(idx>=0&&sidx>=0){el.classList.add('bothPath');el.dataset.step=`${sidx+1}/${idx+1}`;el.dataset.arrow=`${arrow(state.solutionPathDirs[sidx]??0)} ${arrow(state.pathDirs[idx]??0)}`}else if(idx>=0){el.classList.add('path');el.dataset.step=1+idx;el.dataset.arrow=arrow(state.pathDirs[idx]??0)}else if(sidx>=0){el.classList.add('solutionPath');el.dataset.step=1+sidx;el.dataset.arrow=arrow(state.solutionPathDirs[sidx]??0)}
  el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}
 function toggleLock(r,c){let k=key(r,c);state.locked.has(k)?state.locked.delete(k):state.locked.add(k);renderBoard()}
