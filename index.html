@@ -9,10 +9,12 @@
 <style>
 :root{--bg:#f6eed4;--panel:#fff8df;--grid:#646879;--line:#303442;--edge:#b9f0cf;--edgeBad:#ffd7d2;--edgeSame:#fff1a8;--edgeHole:#d1d1d1;--accent:#25304a;--ok:#1d8f55;--warn:#c33;--start:#45a3ff;--out:#b565ff}
 *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:#1c1c1c} header{position:sticky;top:0;z-index:5;background:var(--accent);color:white;padding:10px 12px;box-shadow:0 2px 8px #0003} h1{margin:0;font-size:22px}.sub{font-size:13px;opacity:.85} main{max-width:1060px;margin:auto;padding:12px}.bar,.panel{background:var(--panel);border:1px solid #d6c786;border-radius:14px;padding:10px;margin:10px 0;box-shadow:0 2px 8px #0001}.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,select{font:inherit;border-radius:10px;border:1px solid #b7aa78;background:white;padding:8px 10px}button{cursor:pointer}button.primary{background:#2e7957;color:white;border-color:#1f6547}button.danger{background:#8e2f2f;color:white;border-color:#722}.stock{display:flex;gap:8px;flex-wrap:wrap}.piece{min-width:42px;height:42px;border:2px solid #3f455e;border-radius:8px;background:#5d6274;color:white;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}.piece.sel{outline:4px solid #f5c542}.boardWrap{overflow:auto;padding:8px}.board{display:grid;grid-template-columns:42px repeat(var(--n),52px) 42px;grid-template-rows:42px repeat(var(--n),52px) 42px;width:max-content;margin:auto;gap:0}.cell,.edge,.corner{width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);font-weight:700}.corner{width:42px;height:42px;border:none}.edge{width:42px;height:42px;border:2px solid #e36b64;background:var(--edge);border-radius:12px;margin:0;font-size:18px;position:relative}.edge.top,.edge.bottom{width:52px}.edge.ok{border-color:#e36b64}.edge.bad{border-color:#e36b64;background:var(--edgeBad)}.edge.same{background:var(--edgeSame)}.edge.hole{background:var(--edgeHole)}.edge.solved{border-color:#1d8f55;box-shadow:inset 0 0 0 2px #1d8f55}.edge.selected{box-shadow:0 0 0 4px var(--start);z-index:2}.edge.solved.selected{box-shadow:inset 0 0 0 2px #1d8f55,0 0 0 4px var(--start);z-index:2}.edge.exit{box-shadow:0 0 0 4px var(--out);z-index:2}.edge .tag{position:absolute;left:50%;transform:translateX(-50%);bottom:-18px;font-size:10px;background:#fff;border:1px solid #aaa;border-radius:6px;padding:0 3px;color:#222}.edge.bottom .tag{top:-18px;bottom:auto}.cell{background:var(--grid);color:white;font-size:30px;position:relative}.cell.locked:after{content:'🔒';font-size:14px;position:absolute;right:2px;bottom:1px}.cell.path{box-shadow:inset 0 0 0 4px #65ff69;background:#566b64}.cell.solutionPath{box-shadow:inset 0 0 0 4px #45a3ff;background:#55677d}.cell.bothPath{box-shadow:inset 0 0 0 4px #65ff69, inset 0 0 0 8px #45a3ff;background:#5b6470}.cell.path:before,.cell.solutionPath:before,.cell.bothPath:before{content:attr(data-step);position:absolute;right:3px;top:2px;font-size:12px;color:#eaffef}.cell.solutionPath:before{color:#dff0ff}.cell.bothPath:before{content:attr(data-step)}.cell.path:after,.cell.solutionPath:after,.cell.bothPath:after{content:attr(data-arrow);position:absolute;left:3px;bottom:0;font-size:15px;color:#eaffef}.cell.solutionPath:after{color:#dff0ff}.black{font-size:28px}.warp{font-size:30px}.msg{font-weight:700}.okText{color:var(--ok)}.badText{color:var(--warn)}details{margin-top:8px}.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}.legend div{background:#fffdf0;border:1px solid #e0d7aa;border-radius:10px;padding:8px}.foot{font-size:12px;color:#555;line-height:1.35}.ray{font-weight:700;background:#fffdf0;border:1px solid #e0d7aa;border-radius:10px;padding:8px;margin-top:8px}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 4px 16px #0005;z-index:10;display:none}.toast.show{display:block}@media(max-width:650px){.board{grid-template-columns:36px repeat(var(--n),44px) 36px;grid-template-rows:36px repeat(var(--n),44px) 36px}.cell{width:44px;height:44px}.edge{width:36px;height:36px;font-size:16px}.edge.top,.edge.bottom{width:44px}.corner{width:36px;height:36px}.piece{min-width:38px;height:38px;font-size:24px}}
-.qualityDetails{font-weight:700}.qualityDetails summary{cursor:pointer;list-style:none}.qualityDetails summary::-webkit-details-marker{display:none}.qualityDetails .arrow{display:inline-block;width:1.1em}.qualityDetails[open] .arrow{transform:rotate(90deg)}.qualityBody{margin-top:6px;font-weight:600;line-height:1.35}
 .cell.locked:after{content:none}.lockMark{position:absolute;right:2px;bottom:1px;font-size:14px;line-height:1;z-index:3;pointer-events:none}
 .stock{margin-top:8px}.pieceSymbol{display:inline-block;line-height:1}.pieceSymbol.v2{transform:rotate(90deg)}
-.hidden{display:none}.menuBar{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));align-items:center}.menuBar button{width:100%;min-width:0}.menuBar .msg:empty{display:none}.menuBar .msg{grid-column:1/-1}.settingsBar{margin-top:-4px}
+.hidden{display:none}.appLayout{max-width:1180px;display:grid;gap:12px}.sidePanel{display:contents}.boardPanel{grid-area:board}.menuBar{grid-area:menu;display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));align-items:center}.menuBar button{width:100%;min-width:0}.menuBar .msg:empty{display:none}.menuBar .msg{grid-column:1/-1}.settingsBar{grid-area:settings;margin-top:-4px}.stockPanel{grid-area:stock}.helpPanel{grid-area:help}
+@media(min-width:760px){.appLayout{grid-template-columns:minmax(0,1fr) 320px;grid-template-areas:"board menu" "board settings" "board stock" "board help";align-items:start}.sidePanel{display:contents}.menuBar,.settingsBar,.stockPanel,.helpPanel{margin-left:0;margin-right:0}.menuBar{grid-template-columns:repeat(2,minmax(0,1fr))}.settingsBar label{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}.settingsBar select{min-width:74px}.stockPanel .stock{gap:10px}.boardPanel{margin-right:0}}
+@media(min-width:760px) and (max-width:1100px) and (orientation:landscape){main{padding:8px}.board{grid-template-columns:38px repeat(var(--n),48px) 38px;grid-template-rows:38px repeat(var(--n),48px) 38px}.cell{width:48px;height:48px}.edge{width:38px;height:38px;font-size:16px}.edge.top,.edge.bottom{width:48px}.corner{width:38px;height:38px}.boardWrap{padding:6px}.ray{font-size:13px}}
+@media(max-width:759px){.menuBar,.settingsBar,.stockPanel,.helpPanel,.boardPanel{grid-area:auto}}
 @media(max-width:430px){header{padding:8px 10px}h1{font-size:20px}.sub{font-size:12px}main{padding:8px}.bar,.panel{padding:8px;margin:8px 0;border-radius:8px}.bar{gap:6px}.bar label{display:flex;align-items:center;gap:4px;font-size:14px}button,select{padding:7px 8px}.boardWrap{padding:4px;-webkit-overflow-scrolling:touch}.board{grid-template-columns:32px repeat(var(--n),40px) 32px;grid-template-rows:32px repeat(var(--n),40px) 32px}.cell{width:40px;height:40px;font-size:25px}.edge{width:32px;height:32px;font-size:14px;border-radius:8px}.edge.top,.edge.bottom{width:40px}.corner{width:32px;height:32px}.edge .tag{font-size:9px;bottom:-15px}.edge.bottom .tag{top:-15px}.piece{min-width:36px;height:36px;font-size:22px}.ray{font-size:13px}.legend{grid-template-columns:1fr}}
 @media(max-width:430px){.menuBar{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.menuBar button{padding:8px 2px;font-size:12px}.menuBar .msg{display:block;grid-column:1/-1;font-size:13px}.menuBar .msg:empty{display:none}.settingsBar{display:none}}
 @media(pointer:coarse){html,body,main,section,button,select,input,.board,.cell,.edge,.piece,.stock{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}}
@@ -20,7 +22,8 @@
 </head>
 <body>
 <header><h1>Reflection</h1><div class="sub">Lasersädepulma</div></header>
-<main>
+<main class="appLayout">
+<div class="sidePanel">
 <section class="bar menuBar">
 <button class="primary" id="newGame">Uusi</button>
 <button id="checkBtn">Tarkista</button>
@@ -35,7 +38,7 @@
 <label><input type="checkbox" id="holes" checked> mustat aukot</label>
 <label><input type="checkbox" id="warps" checked> light warp</label>
 </section>
-<section class="panel hidden" id="helpPanel">
+<section class="panel hidden helpPanel" id="helpPanel">
 <div class="legend">
 <div>Valitse esine ja klikkaa ruutua. Uusi klikkaus poistaa esineen. Pitkä painallus tai oikea klikkaus lukitsee ruudun.</div>
 <div>Reunavihjeen numero kertoo, monenko ruudun läpi laser kulkee ennen poistumista, paluuta tai pysähtymistä.</div>
@@ -43,12 +46,12 @@
 <div>Peilit heijastavat sädettä. Musta aukko pysäyttää säteen. Light warp siirtää säteen toiseen warp-ruutuun samaan suuntaan.</div>
 </div>
 </section>
-<section class="panel">
+<section class="panel stockPanel">
 <b>Valitse jäljellä oleva esine ja klikkaa ruutua.</b> <br>
 <div class="stock" id="stock"></div>
-<div id="quality" class="ray">Generaattori etsii pulmia, joissa jokainen piilotettu esine vaikuttaa useaan lasersäteeseen. Uuden pulman jälkeen näkyy myös vaikeusaste.</div>
 </section>
-<section class="panel boardWrap"><div id="board" class="board"></div><div id="rayInfo" class="ray">Klikkaa jotakin reunavihjettä: näet mistä laser lähtee, mihin se menee ja minkä reitin oma tämänhetkinen ratkaisusi tuottaa.</div></section>
+</div>
+<section class="panel boardWrap boardPanel"><div id="board" class="board"></div><div id="rayInfo" class="ray">Klikkaa jotakin reunavihjettä: näet mistä laser lähtee, mihin se menee ja minkä reitin oma tämänhetkinen ratkaisusi tuottaa.</div></section>
 </main><div id="toast" class="toast"></div>
 <script>
 const PIECES=[
@@ -61,7 +64,7 @@ const PIECES=[
  {id:'warp',label:'✣',type:'warp',draw:'✣'}
 ];
 const PLACEABLE_IDS=['slash','back','v2','h2','square','hole'];
-const state={n:6,hidden:[],player:[],clues:[],selected:null,path:[],pathDirs:[],solutionPath:[],solutionPathDirs:[],locked:new Set(),selectedEdge:null,exitEdge:null,lastClue:null,revealed:false,quality:null};
+const state={n:6,hidden:[],player:[],clues:[],selected:null,path:[],pathDirs:[],solutionPath:[],solutionPathDirs:[],locked:new Set(),selectedEdge:null,exitEdge:null,lastClue:null,revealed:false};
 const $=id=>document.getElementById(id);
 function mobilePreset(){return window.matchMedia('(max-width:430px)').matches}
 function applyMobilePreset(){if(!mobilePreset())return;$('size').value='6';$('items').value='12';$('holes').checked=true;$('warps').checked=true}
@@ -99,41 +102,6 @@ function evaluate(b){let sig=boardSignature(b), clues=starts(state.n).map(s=>({.
  let minUse=Math.min(...uses.values()), zero=[...uses.values()].filter(v=>v===0).length, holeCount=clues.filter(c=>c.status==='hole').length, sameCount=clues.filter(c=>c.status==='same').length;
  let score=informative*4+exits.size+minUse*10-zero*100-Math.abs(holeCount-state.n)*2-Math.max(0,sameCount-state.n)*2;
  return {score,minUse,zero,informative,holeCount,sameCount,signature:sig,clues}; }
-function difficultyInfo(b,q){
- let positions=hiddenPositions(b), itemCount=positions.length;
- let warpCount=positions.filter(x=>x[2]==='warp').length;
- let holeCount=positions.filter(x=>x[2]==='hole').length;
- let mirrorCount=positions.filter(x=>['slash','back','v2','h2','square'].includes(x[2])).length;
- let traces=starts(state.n).map(s=>trace(b,s));
- let totalLen=traces.reduce((a,t)=>a+t.count,0);
- let avgLen=traces.length?totalLen/traces.length:0;
- let longest=traces.reduce((m,t)=>Math.max(m,t.count),0);
- let turns=0;
- for(const t of traces){
-  for(let i=1;i<t.dirs.length;i++){
-   if(t.dirs[i]!==t.dirs[i-1]) turns++;
-  }
- }
- let avgTurns=traces.length?turns/traces.length:0;
- let informative=q?.informative??traces.filter(t=>t.status!=='same'||t.count>1).length;
- let minUse=Math.max(0,q?.minUse??0);
- let placeableCount=itemCount-warpCount;
- let baseScore=10;
- let boardScore=Math.max(0,(state.n-6)*6);
- let itemScore=Math.max(0,Math.min(24,(placeableCount-6)*4));
- let warpScore=warpCount?5:0;
- let holeScore=Math.min(6,holeCount*2);
- let avgLenScore=Math.min(12,(avgLen/state.n)*8);
- let longestScore=Math.min(8,(longest/state.n)*2.5);
- let turnScore=Math.min(14,avgTurns*4);
- let informativeScore=Math.min(6,(informative/(state.n*4))*6);
- let useScore=Math.min(3,minUse);
- let oneMoveBonus=q?.oneMove?3:0;
- let raw=baseScore+boardScore+itemScore+warpScore+holeScore+avgLenScore+longestScore+turnScore+informativeScore+useScore+oneMoveBonus;
- let value=Math.max(1,Math.min(100,Math.round(raw)));
- let label=value<60?'Helppo':value<70?'Normaali':value<80?'Haastava':value<90?'Hankala':'Vaikea';
- return {value,label,avgLen,avgTurns,longest,itemCount,warpCount,holeCount,mirrorCount};
-}
 function hasOneMoveAlternative(b,baseSig){let ids=['slash','back','v2','h2','square']; if($('holes').checked)ids.push('hole');let hp=hiddenPositions(b);let empties=[];for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++)if(!b[r][c])empties.push([r,c]);
  for(const [r,c,id] of hp){for(const nid of ids){if(nid!==id){let nb=cloneBoard(b);nb[r][c]=piece(nid);if(boardSignature(nb)===baseSig)return true}}
   for(const [er,ec] of empties.slice(0,80)){let nb=cloneBoard(b);nb[er][ec]=nb[r][c];nb[r][c]=null;if(boardSignature(nb)===baseSig)return true}
@@ -220,7 +188,7 @@ function showPath(clue){
  renderBoard();
 }
 function check(){let ok=0,total=state.clues.length;for(const cl of state.clues){let t=trace(state.player,cl);if(t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||'')))ok++}let s=$('status');s.textContent=`Täsmää: ${ok}/${total}`;s.className='msg '+(ok===total?'okText':'badText');if(ok===total)toast('Ratkaistu!')}
-function newGame(){applyMobilePreset();state.n=+$('size').value;state.hidden=blank(state.n);state.player=blank(state.n);state.locked.clear();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.selectedEdge=null;state.exitEdge=null;state.lastClue=null;state.revealed=false;setRevealButtonText();state.selected=null;$('status').textContent='';$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';$('stock').innerHTML='';renderBoard();$('quality').textContent='Haetaan parempaa pulmaa...';setTimeout(()=>{applyMobilePreset();let g=generateBetter();state.hidden=g.board;state.player=initialPlayerBoard();state.quality=g.q;computeClues();let q=g.q;let d=difficultyInfo(state.hidden,q);renderStock();$('quality').innerHTML=`<details class="qualityDetails"><summary><span class="arrow">▶</span><b>Vaikeusaste:</b> ${d.label}</summary><div class="qualityBody"><div><b>Pulman laatu:</b> yrityksiä ${q.attempts}, kaikki asetettavat esineet osuvat säteisiin, pienin osumamäärä ${q.minUse}, informatiivisia vihjeitä ${q.informative}/${state.n*4}.</div><div><b>Vaikeuteen vaikuttaa:</b> asetettavia esineitä ${d.itemCount-d.warpCount}, valmiita warpeja ${d.warpCount}, aukkoja ${d.holeCount}, säteen keskipituus ${d.avgLen.toFixed(1)}, käännöksiä keskimäärin ${d.avgTurns.toFixed(1)}.</div><div>${q.oneMove?'Yhden esineen muutos/siirto ei tuottanut samoja vihjeitä.':'Täyttä yhden muutoksen testiä ei läpäisty, mutta valittiin paras löydetty pulma.'}</div></div></details>`;renderBoard();},20)}
+function newGame(){applyMobilePreset();state.n=+$('size').value;state.hidden=blank(state.n);state.player=blank(state.n);state.locked.clear();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.selectedEdge=null;state.exitEdge=null;state.lastClue=null;state.revealed=false;setRevealButtonText();state.selected=null;$('status').textContent='';$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';$('stock').innerHTML='';renderBoard();setTimeout(()=>{applyMobilePreset();let g=generateBetter();state.hidden=g.board;state.player=initialPlayerBoard();computeClues();renderStock();renderBoard();},20)}
 $('newGame').onclick=newGame;$('checkBtn').onclick=check;$('helpBtn').onclick=()=>{$('helpPanel').classList.toggle('hidden')};$('clearBtn').onclick=()=>{state.player=clearUnlockedBoard();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.revealed=false;setRevealButtonText();renderStock();renderBoard()};$('revealBtn').onclick=()=>{state.revealed=!state.revealed;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;renderBoard(state.revealed);setRevealButtonText();if(state.lastClue){showPath(state.lastClue)}else{$('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.'}};
 newGame();
 if('serviceWorker' in navigator){
