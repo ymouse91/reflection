@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#25304a" />
+<title>Reflection</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#f6eed4;--panel:#fff8df;--grid:#646879;--line:#303442;--edge:#b9f0cf;--edgeBad:#ffd7d2;--edgeSame:#fff1a8;--edgeHole:#d1d1d1;--accent:#25304a;--ok:#1d8f55;--warn:#c33;--start:#45a3ff;--out:#b565ff}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:#1c1c1c} header{position:sticky;top:0;z-index:5;background:var(--accent);color:white;padding:10px 12px;box-shadow:0 2px 8px #0003} h1{margin:0;font-size:22px}.sub{font-size:13px;opacity:.85} main{max-width:1060px;margin:auto;padding:12px}.bar,.panel{background:var(--panel);border:1px solid #d6c786;border-radius:14px;padding:10px;margin:10px 0;box-shadow:0 2px 8px #0001}.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,select{font:inherit;border-radius:10px;border:1px solid #b7aa78;background:white;padding:8px 10px}button{cursor:pointer}button.primary{background:#2e7957;color:white;border-color:#1f6547}button.danger{background:#8e2f2f;color:white;border-color:#722}.stock{display:flex;gap:8px;flex-wrap:wrap}.piece{min-width:42px;height:42px;border:2px solid #3f455e;border-radius:8px;background:#5d6274;color:white;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}.piece.sel{outline:4px solid #f5c542}.boardWrap{overflow:auto;padding:8px}.board{display:grid;grid-template-columns:42px repeat(var(--n),52px) 42px;grid-template-rows:42px repeat(var(--n),52px) 42px;width:max-content;margin:auto;gap:0}.cell,.edge,.corner{width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);font-weight:700}.corner{width:42px;height:42px;border:none}.edge{width:42px;height:42px;border:2px solid #e36b64;background:var(--edge);border-radius:12px;margin:0;font-size:18px;position:relative}.edge.top,.edge.bottom{width:52px}.edge.ok{border-color:#e36b64}.edge.bad{border-color:#e36b64;background:var(--edgeBad)}.edge.same{background:var(--edgeSame)}.edge.hole{background:var(--edgeHole)}.edge.solved{border-color:#1d8f55;box-shadow:inset 0 0 0 2px #1d8f55}.edge.selected{box-shadow:0 0 0 4px var(--start);z-index:2}.edge.solved.selected{box-shadow:inset 0 0 0 2px #1d8f55,0 0 0 4px var(--start);z-index:2}.edge.exit{box-shadow:0 0 0 4px var(--out);z-index:2}.edge .tag{position:absolute;left:50%;transform:translateX(-50%);bottom:-18px;font-size:10px;background:#fff;border:1px solid #aaa;border-radius:6px;padding:0 3px;color:#222}.edge.bottom .tag{top:-18px;bottom:auto}.cell{background:var(--grid);color:white;font-size:30px;position:relative}.cell.locked:after{content:'🔒';font-size:14px;position:absolute;right:2px;bottom:1px}.cell.path{box-shadow:inset 0 0 0 4px #65ff69;background:#566b64}.cell.solutionPath{box-shadow:inset 0 0 0 4px #45a3ff;background:#55677d}.cell.bothPath{box-shadow:inset 0 0 0 4px #65ff69, inset 0 0 0 8px #45a3ff;background:#5b6470}.cell.path:before,.cell.solutionPath:before,.cell.bothPath:before{content:attr(data-step);position:absolute;right:3px;top:2px;font-size:12px;color:#eaffef}.cell.solutionPath:before{color:#dff0ff}.cell.bothPath:before{content:attr(data-step)}.cell.path:after,.cell.solutionPath:after,.cell.bothPath:after{content:attr(data-arrow);position:absolute;left:3px;bottom:0;font-size:15px;color:#eaffef}.cell.solutionPath:after{color:#dff0ff}.black{font-size:28px}.warp{font-size:30px}.msg{font-weight:700}.okText{color:var(--ok)}.badText{color:var(--warn)}details{margin-top:8px}.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}.legend div{background:#fffdf0;border:1px solid #e0d7aa;border-radius:10px;padding:8px}.foot{font-size:12px;color:#555;line-height:1.35}.ray{font-weight:700;background:#fffdf0;border:1px solid #e0d7aa;border-radius:10px;padding:8px;margin-top:8px}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 4px 16px #0005;z-index:10;display:none}.toast.show{display:block}@media(max-width:650px){.board{grid-template-columns:36px repeat(var(--n),44px) 36px;grid-template-rows:36px repeat(var(--n),44px) 36px}.cell{width:44px;height:44px}.edge{width:36px;height:36px;font-size:16px}.edge.top,.edge.bottom{width:44px}.corner{width:36px;height:36px}.piece{min-width:38px;height:38px;font-size:24px}}
+.qualityDetails{font-weight:700}.qualityDetails summary{cursor:pointer;list-style:none}.qualityDetails summary::-webkit-details-marker{display:none}.qualityDetails .arrow{display:inline-block;width:1.1em}.qualityDetails[open] .arrow{transform:rotate(90deg)}.qualityBody{margin-top:6px;font-weight:600;line-height:1.35}
+.hidden{display:none}.menuBar{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));align-items:center}.menuBar button{width:100%;min-width:0}.menuBar .msg:empty{display:none}.menuBar .msg{grid-column:1/-1}.settingsBar{margin-top:-4px}
+@media(max-width:430px){header{padding:8px 10px}h1{font-size:20px}.sub{font-size:12px}main{padding:8px}.bar,.panel{padding:8px;margin:8px 0;border-radius:8px}.bar{gap:6px}.bar label{display:flex;align-items:center;gap:4px;font-size:14px}button,select{padding:7px 8px}.boardWrap{padding:4px;-webkit-overflow-scrolling:touch}.board{grid-template-columns:32px repeat(var(--n),40px) 32px;grid-template-rows:32px repeat(var(--n),40px) 32px}.cell{width:40px;height:40px;font-size:25px}.edge{width:32px;height:32px;font-size:14px;border-radius:8px}.edge.top,.edge.bottom{width:40px}.corner{width:32px;height:32px}.edge .tag{font-size:9px;bottom:-15px}.edge.bottom .tag{top:-15px}.piece{min-width:36px;height:36px;font-size:22px}.ray{font-size:13px}.legend{grid-template-columns:1fr}}
+@media(max-width:430px){.menuBar{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.menuBar button{padding:8px 2px;font-size:12px}.menuBar .msg{display:none}.settingsBar label{display:flex}.settingsBar{gap:6px}.settingsBar label{font-size:13px}.settingsBar select{padding:5px 6px}.settingsBar .msg{flex-basis:100%;font-size:13px}}
+</style>
+</head>
+<body>
+<header><h1>Reflection</h1><div class="sub">Lasersädepulma</div></header>
+<main>
+<section class="bar menuBar">
+<button class="primary" id="newGame">Uusi</button>
+<button id="checkBtn">Tarkista</button>
+<button id="revealBtn">Ratkaisu</button>
+<button class="danger" id="clearBtn">Tyhjennä</button>
+<button id="helpBtn">Ohje</button>
+<span id="status" class="msg"></span>
+</section>
+<section class="bar settingsBar">
+<label>Ruudukko <select id="size"><option selected>6</option><option>8</option><option>10</option></select></label>
+<label>Esineitä <select id="items"><option selected>8</option><option>10</option><option>12</option></select></label>
+<label><input type="checkbox" id="holes" checked> mustat aukot</label>
+<label><input type="checkbox" id="warps" checked> light warp mahdollinen</label>
+</section>
+<section class="panel hidden" id="helpPanel">
+<div class="legend">
+<div>Valitse esine ja klikkaa ruutua. Uusi klikkaus poistaa esineen. Pitkä painallus tai oikea klikkaus lukitsee ruudun.</div>
+<div>Reunavihjeen numero kertoo, monenko ruudun läpi laser kulkee ennen poistumista, paluuta tai pysähtymistä.</div>
+<div>Vihreä vihje: laser poistuu eri reunaruudusta. Keltainen: laser palaa samaan reunaruutuun. Harmaa: laser päätyy mustaan aukkoon.</div>
+<div>Peilit heijastavat sädettä. Musta aukko pysäyttää säteen. Light warp siirtää säteen toiseen warp-ruutuun samaan suuntaan.</div>
+</div>
+</section>
+<section class="panel">
+<b>Valitse jäljellä oleva esine ja klikkaa ruutua.</b> Uusi klikkaus poistaa esineen ja palauttaa sen listaan. Pitkä painallus tai oikea klikkaus lukitsee ruudun muistiinpanoksi.
+<div class="stock" id="stock"></div>
+<div id="quality" class="ray">Generaattori etsii pulmia, joissa jokainen piilotettu esine vaikuttaa useaan lasersäteeseen. Uuden pulman jälkeen näkyy myös vaikeusaste.</div>
+</section>
+<section class="panel boardWrap"><div id="board" class="board"></div><div id="rayInfo" class="ray">Klikkaa jotakin reunavihjettä: näet mistä laser lähtee, mihin se menee ja minkä reitin oma tämänhetkinen ratkaisusi tuottaa.</div></section>
+</main><div id="toast" class="toast"></div>
+<script>
+const PIECES=[
+ {id:'slash',label:'/',type:'mirror',draw:'╱'},
+ {id:'back',label:'\\',type:'mirror',draw:'╲'},
+ {id:'v2',label:'║',type:'mirror',draw:'║'},
+ {id:'h2',label:'═',type:'mirror',draw:'═'},
+ {id:'square',label:'▣',type:'mirror',draw:'▣'},
+ {id:'hole',label:'●',type:'hole',draw:'●'},
+ {id:'warp',label:'✣',type:'warp',draw:'✣'}
+];
+const PLACEABLE_IDS=['slash','back','v2','h2','square','hole'];
+const state={n:6,hidden:[],player:[],clues:[],selected:null,path:[],pathDirs:[],solutionPath:[],solutionPathDirs:[],locked:new Set(),selectedEdge:null,exitEdge:null,lastClue:null,revealed:false,quality:null};
+const $=id=>document.getElementById(id);
+function mobilePreset(){return window.matchMedia('(max-width:430px)').matches}
+function applyMobilePreset(){}
+function setRevealButtonText(){$('revealBtn').textContent=state.revealed?'Piilota':'Ratkaisu'}
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1700)}
+function blank(n){return Array.from({length:n},()=>Array(n).fill(null))}
+function key(r,c){return r+','+c} function inb(r,c,n=state.n){return r>=0&&c>=0&&r<n&&c<n} function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function cloneBoard(b){return b.map(row=>row.slice())} function piece(id){return PIECES.find(x=>x.id===id)}
+function reflect(dir,p){
+ if(p==='slash') return [1,0,3,2][dir];
+ if(p==='back') return [3,2,1,0][dir];
+ if(p==='v2') return [0,3,2,1][dir];      // pystykaksoispeili: pystysäde läpi, vaakasäde takaisin
+ if(p==='h2') return [2,1,0,3][dir];      // vaakakaksoispeili: vaakasäde läpi, pystysäde takaisin
+ if(p==='square') return [2,3,0,1][dir];  // neliöpeili: takaisin joka suunnasta
+ return dir;
+}
+function starts(n){let arr=[];for(let c=0;c<n;c++)arr.push({side:'T',r:-1,c,dir:2});for(let r=0;r<n;r++)arr.push({side:'R',r,c:n,dir:3});for(let c=0;c<n;c++)arr.push({side:'B',r:n,c,dir:0});for(let r=0;r<n;r++)arr.push({side:'L',r,c:-1,dir:1});return arr}
+function sideLabel(side){return {T:'Y',B:'A',R:'O',L:'V'}[side]||side}
+function edgeId(s){return `${sideLabel(s.side)}${(s.side==='L'||s.side==='R'?s.r:s.c)+1}`} function stepPos(r,c,dir){return dir===0?[r-1,c]:dir===1?[r,c+1]:dir===2?[r+1,c]:[r,c-1]}
+function exitId(r,c,dir,n){if(r<0)return'Y'+(c+1);if(r>=n)return'A'+(c+1);if(c<0)return'V'+(r+1);if(c>=n)return'O'+(r+1);return''}
+function trace(board,start){let n=state.n,r=start.r,c=start.c,dir=start.dir,count=0,path=[],dirs=[],seen=new Set(),warps=[]; for(let rr=0;rr<n;rr++)for(let cc=0;cc<n;cc++)if(board[rr][cc]?.id==='warp')warps.push([rr,cc]);
+ while(true){let [nr,nc]=stepPos(r,c,dir);r=nr;c=nc;if(!inb(r,c,n)){let ex=exitId(r,c,dir,n);return {count,status:edgeId(start)===ex?'same':'exit',path,dirs,exit:ex}}
+  count++; path.push([r,c]); dirs.push(dir); let sig=`${r},${c},${dir}`; if(seen.has(sig)) return {count,status:'same',path,dirs,exit:edgeId(start)}; seen.add(sig);
+  let p=board[r][c]; if(!p) continue; if(p.id==='hole') return {count,status:'hole',path,dirs,exit:null};
+  if(p.id==='warp'&&warps.length===2){let other=warps.find(w=>w[0]!==r||w[1]!==c); if(other){r=other[0];c=other[1]; count++; path.push([r,c]); dirs.push(dir); continue}}
+  dir=reflect(dir,p.id);
+ }}
+function boardSignature(b){return starts(state.n).map(s=>{let t=trace(b,s);return `${t.count}:${t.status}:${t.exit||''}`}).join('|')}
+function hiddenPositions(b=state.hidden){let a=[];for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++)if(b[r][c])a.push([r,c,b[r][c].id]);return a}
+function makeCandidate(){let n=state.n,total=+$('items').value,b=blank(n);let pool=['slash','back','v2','h2','square']; if($('holes').checked) pool.push('hole');let pos=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)pos.push([r,c]);pos.sort(()=>Math.random()-.5);let useWarps=$('warps').checked&&Math.random()<0.5;if(useWarps){for(let i=0;i<2;i++){let [r,c]=pos.pop();b[r][c]=piece('warp')}}for(let i=0;i<total;i++){let [r,c]=pos.pop();b[r][c]=piece(rand(pool))}return b}
+function evaluate(b){let sig=boardSignature(b), clues=starts(state.n).map(s=>({...s,...trace(b,s)})), uses=new Map(), turns=0, informative=0, exits=new Set();hiddenPositions(b).forEach(([r,c])=>uses.set(key(r,c),0));
+ for(const cl of clues){if(cl.status!=='same'||cl.count>1)informative++; if(cl.exit)exits.add(cl.exit); for(let i=0;i<cl.path.length;i++){let [r,c]=cl.path[i]; if(uses.has(key(r,c)))uses.set(key(r,c),(uses.get(key(r,c))||0)+1)} }
+ for(const [r,c,id] of hiddenPositions(b)){if(PLACEABLE_IDS.includes(id)&&id!=='hole'){for(const st of starts(state.n)){let t=trace(b,st); if(t.path.some(x=>x[0]===r&&x[1]===c))turns++}}}
+ let minUse=Math.min(...uses.values()), zero=[...uses.values()].filter(v=>v===0).length, holeCount=clues.filter(c=>c.status==='hole').length, sameCount=clues.filter(c=>c.status==='same').length;
+ let score=informative*4+exits.size+minUse*10-zero*100-Math.abs(holeCount-state.n)*2-Math.max(0,sameCount-state.n)*2;
+ return {score,minUse,zero,informative,holeCount,sameCount,signature:sig,clues}; }
+function difficultyInfo(b,q){
+ let positions=hiddenPositions(b), itemCount=positions.length;
+ let warpCount=positions.filter(x=>x[2]==='warp').length;
+ let holeCount=positions.filter(x=>x[2]==='hole').length;
+ let mirrorCount=positions.filter(x=>['slash','back','v2','h2','square'].includes(x[2])).length;
+ let traces=starts(state.n).map(s=>trace(b,s));
+ let totalLen=traces.reduce((a,t)=>a+t.count,0);
+ let avgLen=traces.length?totalLen/traces.length:0;
+ let longest=traces.reduce((m,t)=>Math.max(m,t.count),0);
+ let turns=0;
+ for(const t of traces){
+  for(let i=1;i<t.dirs.length;i++){
+   if(t.dirs[i]!==t.dirs[i-1]) turns++;
+  }
+ }
+ let avgTurns=traces.length?turns/traces.length:0;
+ let informative=q?.informative??traces.filter(t=>t.status!=='same'||t.count>1).length;
+ let minUse=Math.max(0,q?.minUse??0);
+ let placeableCount=itemCount-warpCount;
+ let baseScore=10;
+ let boardScore=Math.max(0,(state.n-6)*6);
+ let itemScore=Math.max(0,Math.min(24,(placeableCount-6)*4));
+ let warpScore=warpCount?5:0;
+ let holeScore=Math.min(6,holeCount*2);
+ let avgLenScore=Math.min(12,(avgLen/state.n)*8);
+ let longestScore=Math.min(8,(longest/state.n)*2.5);
+ let turnScore=Math.min(14,avgTurns*4);
+ let informativeScore=Math.min(6,(informative/(state.n*4))*6);
+ let useScore=Math.min(3,minUse);
+ let oneMoveBonus=q?.oneMove?3:0;
+ let raw=baseScore+boardScore+itemScore+warpScore+holeScore+avgLenScore+longestScore+turnScore+informativeScore+useScore+oneMoveBonus;
+ let value=Math.max(1,Math.min(100,Math.round(raw)));
+ let label=value<60?'Helppo':value<70?'Normaali':value<80?'Haastava':value<90?'Hankala':'Vaikea';
+ return {value,label,avgLen,avgTurns,longest,itemCount,warpCount,holeCount,mirrorCount};
+}
+function hasOneMoveAlternative(b,baseSig){let ids=['slash','back','v2','h2','square']; if($('holes').checked)ids.push('hole');let hp=hiddenPositions(b);let empties=[];for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++)if(!b[r][c])empties.push([r,c]);
+ for(const [r,c,id] of hp){for(const nid of ids){if(nid!==id){let nb=cloneBoard(b);nb[r][c]=piece(nid);if(boardSignature(nb)===baseSig)return true}}
+  for(const [er,ec] of empties.slice(0,80)){let nb=cloneBoard(b);nb[er][ec]=nb[r][c];nb[r][c]=null;if(boardSignature(nb)===baseSig)return true}
+ }
+ return false;}
+function generateBetter(){let best=null,bestQ=null;let attempts=0,accepted=null,acceptedQ=null;while(attempts<1200&&!accepted){attempts++;let b=makeCandidate();let q=evaluate(b);if(!best||q.score>bestQ.score){best=b;bestQ=q} let minReq=state.n<=6?2:1; if(q.zero===0&&q.minUse>=minReq&&q.informative>=state.n*3){let alt=hasOneMoveAlternative(b,q.signature); if(!alt){accepted=b;acceptedQ={...q,attempts,oneMove:true};break}}}
+ if(!accepted){accepted=best;acceptedQ={...bestQ,attempts,oneMove:false}}return {board:accepted,q:acceptedQ};}
+function computeClues(){state.clues=starts(state.n).map(s=>({...s,...trace(state.hidden,s)}))}
+function solutionCounts(){let counts={};for(const [r,c,id] of hiddenPositions(state.hidden)){if(id==='warp')continue;counts[id]=(counts[id]||0)+1}return counts}
+function playerCounts(){let counts={};for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++){let p=state.player[r]?.[c];if(p&&p.id!=='warp')counts[p.id]=(counts[p.id]||0)+1}return counts}
+function remainingCounts(){let sol=solutionCounts(), used=playerCounts(), rem={};for(const id of Object.keys(sol)){rem[id]=Math.max(0,sol[id]-(used[id]||0))}return rem}
+function initialPlayerBoard(){let b=blank(state.n);for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++){if(state.hidden[r]?.[c]?.id==='warp')b[r][c]=piece('warp')}return b}
+function clearUnlockedBoard(){let b=initialPlayerBoard();for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++){if(state.locked.has(key(r,c))&&state.player[r]?.[c])b[r][c]=state.player[r][c]}return b}
+function renderStock(){
+ const stock=$('stock');stock.innerHTML='';
+ const rem=remainingCounts();
+ const available=PIECES.filter(p=>p.id!=='warp'&&(rem[p.id]||0)>0);
+ if(!available.some(p=>p.id===state.selected?.id)) state.selected=available[0]||null;
+ if(!available.length){let d=document.createElement('div');d.className='ray';d.textContent='Kaikki asetettavat esineet on käytetty.';stock.appendChild(d);return}
+ for(const p of available){let d=document.createElement('button');d.className='piece';d.textContent=`${p.draw}×${rem[p.id]}`;d.title=p.id;d.onclick=()=>{state.selected=p;renderStock()}; if(state.selected?.id===p.id)d.classList.add('sel');stock.appendChild(d)}
+}
+function clueClass(cl){return cl.status==='hole'?'hole':cl.status==='same'?'same':'ok'}
+function clueSolved(cl){if(!cl||!state.player||!state.player.length)return false;let t=trace(state.player,cl);return t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||''));}
+function arrow(d){return ['↑','→','↓','←'][d]}
+function renderBoard(showSolution=state.revealed){let n=state.n,b=$('board');b.style.setProperty('--n',n);b.innerHTML='';for(let gr=0;gr<n+2;gr++){for(let gc=0;gc<n+2;gc++){let el=document.createElement('div'); if((gr===0||gr===n+1)&&(gc===0||gc===n+1)){el.className='corner';b.appendChild(el);continue}
+ let clue=null;if(gr===0)clue=state.clues.find(x=>x.side==='T'&&x.c===gc-1);if(gr===n+1)clue=state.clues.find(x=>x.side==='B'&&x.c===gc-1);if(gc===0)clue=state.clues.find(x=>x.side==='L'&&x.r===gr-1);if(gc===n+1)clue=state.clues.find(x=>x.side==='R'&&x.r===gr-1);
+ if(gr===0||gr===n+1||gc===0||gc===n+1){
+  el.className='edge '+(gr===0?'top':gr===n+1?'bottom':'')+(clue?' '+clueClass(clue):' pending');
+  if(clue){let id=edgeId(clue);if(clueSolved(clue))el.classList.add('solved');if(state.selectedEdge===id)el.classList.add('selected');if(state.exitEdge===id)el.classList.add('exit');el.textContent=clue.count;if(state.selectedEdge===id||state.exitEdge===id){let tag=document.createElement('span');tag.className='tag';tag.textContent=state.selectedEdge===id?'LÄHTÖ':'ULOS';el.appendChild(tag)}el.onclick=()=>showPath(clue)}
+  else {el.textContent='';}
+  b.appendChild(el);continue
+ }
+ let r=gr-1,c=gc-1;el.className='cell'; if(state.locked.has(key(r,c)))el.classList.add('locked');let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null; if(p){el.textContent=p.draw;if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}
+ let idx=state.path.findIndex(x=>x[0]===r&&x[1]===c);let sidx=state.solutionPath.findIndex(x=>x[0]===r&&x[1]===c); if(idx>=0&&sidx>=0){el.classList.add('bothPath');el.dataset.step=`${sidx+1}/${idx+1}`;el.dataset.arrow=`${arrow(state.solutionPathDirs[sidx]??0)} ${arrow(state.pathDirs[idx]??0)}`}else if(idx>=0){el.classList.add('path');el.dataset.step=1+idx;el.dataset.arrow=arrow(state.pathDirs[idx]??0)}else if(sidx>=0){el.classList.add('solutionPath');el.dataset.step=1+sidx;el.dataset.arrow=arrow(state.solutionPathDirs[sidx]??0)}
+ el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}
+function toggleLock(r,c){let k=key(r,c);state.locked.has(k)?state.locked.delete(k):state.locked.add(k);renderBoard()}
+function place(r,c){
+ if(state.locked.has(key(r,c)))return toast('Ruutu on lukittu');
+ const cur=state.player[r]?.[c];
+ if(cur?.id==='warp')return toast('Light warp on valmiiksi laudalla');
+ state.revealed=false;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;
+ if(cur){state.player[r][c]=null;renderStock();renderBoard();return}
+ if(!state.selected)return toast('Ei asetettavia esineitä jäljellä');
+ const rem=remainingCounts();
+ if((rem[state.selected.id]||0)<=0){renderStock();return toast('Tätä esinettä ei ole jäljellä')}
+ state.player[r][c]=state.selected;
+ renderStock();
+ renderBoard();
+}
+function clearPathInfo(){
+ state.path=[];
+ state.pathDirs=[];
+ state.solutionPath=[];
+ state.solutionPathDirs=[];
+ state.selectedEdge=null;
+ state.exitEdge=null;
+ state.lastClue=null;
+ $('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';
+ renderBoard();
+}
+function showPath(clue){
+ const clickedEdge=edgeId(clue);
+ if(state.selectedEdge===clickedEdge && (state.path.length>0 || state.solutionPath.length>0)){
+  clearPathInfo();
+  return;
+ }
+ let solution=trace(state.hidden,clue);
+ let player=trace(state.player,clue);
+ state.solutionPath=state.revealed?solution.path:[];
+ state.solutionPathDirs=state.revealed?solution.dirs:[];
+ state.path=state.revealed?[]:player.path;
+ state.pathDirs=state.revealed?[]:player.dirs;
+ state.selectedEdge=clickedEdge;
+ state.exitEdge=state.revealed?solution.exit:player.exit;
+ state.lastClue=clue;
+ let target=solution.status==='hole'?'mustaan aukkoon':(solution.status==='same'?'takaisin samaan reunaan':`ulos reunasta ${solution.exit}`);
+ let actual=player.status==='hole'?'mustaan aukkoon':(player.status==='same'?'takaisin samaan reunaan':`ulos reunasta ${player.exit}`);
+ if(state.revealed){
+  $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje / ratkaisu:</b> ${solution.count} ruutua ja ${target}.</div><div><b>Reitti:</b> sininen reitti on ratkaisu.</div>`;
+ }else{
+  let ok=player.count===solution.count&&player.status===solution.status&&((player.exit||'')===(solution.exit||''));
+  $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje:</b> ${solution.count} ruutua ja ${target}.</div><div><b>Nykyinen lautasi:</b> ${player.count} ruutua ja ${actual}. <span style="color:#1d8f55">Vihreä</span> = nykyisen laudan reitti.</div><div><b>Tulos:</b> ${ok?'Tämä lähtö täsmää.':'Tämä lähtö ei täsmää.'}</div>`;
+ }
+ renderBoard();
+}
+function check(){let ok=0,total=state.clues.length;for(const cl of state.clues){let t=trace(state.player,cl);if(t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||'')))ok++}let s=$('status');s.textContent=`Täsmää: ${ok}/${total}`;s.className='msg '+(ok===total?'okText':'badText');if(ok===total)toast('Ratkaistu!')}
+function newGame(){applyMobilePreset();state.n=+$('size').value;state.hidden=blank(state.n);state.player=blank(state.n);state.locked.clear();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.selectedEdge=null;state.exitEdge=null;state.lastClue=null;state.revealed=false;setRevealButtonText();state.selected=null;$('status').textContent='';$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';$('stock').innerHTML='';renderBoard();$('quality').textContent='Haetaan parempaa pulmaa...';setTimeout(()=>{applyMobilePreset();let g=generateBetter();state.hidden=g.board;state.player=initialPlayerBoard();state.quality=g.q;computeClues();let q=g.q;let d=difficultyInfo(state.hidden,q);renderStock();$('quality').innerHTML=`<details class="qualityDetails"><summary><span class="arrow">▶</span><b>Vaikeusaste:</b> ${d.label}</summary><div class="qualityBody"><div><b>Pulman laatu:</b> yrityksiä ${q.attempts}, kaikki asetettavat esineet osuvat säteisiin, pienin osumamäärä ${q.minUse}, informatiivisia vihjeitä ${q.informative}/${state.n*4}.</div><div><b>Vaikeuteen vaikuttaa:</b> asetettavia esineitä ${d.itemCount-d.warpCount}, valmiita warpeja ${d.warpCount}, aukkoja ${d.holeCount}, säteen keskipituus ${d.avgLen.toFixed(1)}, käännöksiä keskimäärin ${d.avgTurns.toFixed(1)}.</div><div>${q.oneMove?'Yhden esineen muutos/siirto ei tuottanut samoja vihjeitä.':'Täyttä yhden muutoksen testiä ei läpäisty, mutta valittiin paras löydetty pulma.'}</div></div></details>`;renderBoard();},20)}
+$('newGame').onclick=newGame;$('checkBtn').onclick=check;$('helpBtn').onclick=()=>{$('helpPanel').classList.toggle('hidden')};$('clearBtn').onclick=()=>{state.player=clearUnlockedBoard();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.revealed=false;setRevealButtonText();renderStock();renderBoard()};$('revealBtn').onclick=()=>{state.revealed=!state.revealed;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;renderBoard(state.revealed);setRevealButtonText();if(state.lastClue){showPath(state.lastClue)}else{$('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.'}};
+newGame();
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register('./sw.js');
+}
+</script>
+</body>
+</html>
