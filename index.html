@@ -79,6 +79,7 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');set
 function blank(n){return Array.from({length:n},()=>Array(n).fill(null))}
 function key(r,c){return r+','+c} function inb(r,c,n=state.n){return r>=0&&c>=0&&r<n&&c<n} function rand(a){return a[Math.floor(Math.random()*a.length)]}
 function cloneBoard(b){return b.map(row=>row.slice())} function piece(id){return PIECES.find(x=>x.id===id)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function drawPiece(el,p){let s=document.createElement('span');s.className='pieceSymbol '+p.id;s.textContent=p.draw;el.appendChild(s)}
 function reflect(dir,p){
  if(p==='slash') return [1,0,3,2][dir];
@@ -101,7 +102,7 @@ function trace(board,start){let n=state.n,r=start.r,c=start.c,dir=start.dir,coun
  }}
 function boardSignature(b){return starts(state.n).map(s=>{let t=trace(b,s);return `${t.count}:${t.status}:${t.exit||''}`}).join('|')}
 function hiddenPositions(b=state.hidden){let a=[];for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++)if(b[r][c])a.push([r,c,b[r][c].id]);return a}
-function makeCandidate(){let n=state.n,total=+$('items').value,b=blank(n);let pool=['slash','back','v2','h2','square']; if($('holes').checked) pool.push('hole');let pos=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)pos.push([r,c]);pos.sort(()=>Math.random()-.5);let useWarps=$('warps').checked&&Math.random()<0.5;if(useWarps){for(let i=0;i<2;i++){let [r,c]=pos.pop();b[r][c]=piece('warp')}}for(let i=0;i<total;i++){let [r,c]=pos.pop();b[r][c]=piece(rand(pool))}return b}
+function makeCandidate(){let n=state.n,total=+$('items').value,b=blank(n);let pool=['slash','back','v2','h2','square']; if($('holes').checked) pool.push('hole');let pos=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)pos.push([r,c]);shuffle(pos);let useWarps=$('warps').checked&&Math.random()<0.5;if(useWarps){for(let i=0;i<2;i++){let [r,c]=pos.pop();b[r][c]=piece('warp')}}for(let i=0;i<total;i++){let [r,c]=pos.pop();b[r][c]=piece(rand(pool))}return b}
 function evaluate(b){let sig=boardSignature(b), clues=starts(state.n).map(s=>({...s,...trace(b,s)})), uses=new Map(), turns=0, informative=0, exits=new Set();hiddenPositions(b).forEach(([r,c])=>uses.set(key(r,c),0));
  for(const cl of clues){if(cl.status!=='same'||cl.count>1)informative++; if(cl.exit)exits.add(cl.exit); for(let i=0;i<cl.path.length;i++){let [r,c]=cl.path[i]; if(uses.has(key(r,c)))uses.set(key(r,c),(uses.get(key(r,c))||0)+1)} }
  for(const [r,c,id] of hiddenPositions(b)){if(PLACEABLE_IDS.includes(id)&&id!=='hole'){for(const st of starts(state.n)){let t=trace(b,st); if(t.path.some(x=>x[0]===r&&x[1]===c))turns++}}}
