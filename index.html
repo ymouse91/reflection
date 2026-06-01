@@ -160,10 +160,10 @@ function renderBoard(showSolution=state.revealed){let n=state.n,b=$('board');b.s
   else {el.textContent='';}
   b.appendChild(el);continue
  }
- let r=gr-1,c=gc-1;el.className='cell';let isLocked=state.locked.has(key(r,c)); if(isLocked)el.classList.add('locked');let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null; if(p){drawPiece(el,p);if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}if(isLocked){let lock=document.createElement('span');lock.className='lockMark';lock.textContent='🔒';el.appendChild(lock)}
+ let r=gr-1,c=gc-1;el.className='cell';let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null;let isLocked=!!p&&state.locked.has(key(r,c)); if(isLocked)el.classList.add('locked'); if(p){drawPiece(el,p);if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}if(isLocked){let lock=document.createElement('span');lock.className='lockMark';lock.textContent='🔒';el.appendChild(lock)}
  let idx=state.path.findIndex(x=>x[0]===r&&x[1]===c);let sidx=state.solutionPath.findIndex(x=>x[0]===r&&x[1]===c); if(idx>=0&&sidx>=0){el.classList.add('bothPath');el.dataset.step=`${sidx+1}/${idx+1}`;el.dataset.arrow=`${arrow(state.solutionPathDirs[sidx]??0)} ${arrow(state.pathDirs[idx]??0)}`}else if(idx>=0){el.classList.add('path');el.dataset.step=1+idx;el.dataset.arrow=arrow(state.pathDirs[idx]??0)}else if(sidx>=0){el.classList.add('solutionPath');el.dataset.step=1+sidx;el.dataset.arrow=arrow(state.solutionPathDirs[sidx]??0)}
  el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}
-function toggleLock(r,c){let k=key(r,c);state.locked.has(k)?state.locked.delete(k):state.locked.add(k);renderBoard()}
+function toggleLock(r,c){let k=key(r,c);if(state.locked.has(k)){state.locked.delete(k);renderBoard();return}if(!state.player[r]?.[c])return toast('Tyhjää ruutua ei voi lukita');state.locked.add(k);renderBoard()}
 function place(r,c){
  if(state.locked.has(key(r,c)))return toast('Ruutu on lukittu');
  const cur=state.player[r]?.[c];
@@ -204,8 +204,8 @@ function showPath(clue){
  state.selectedEdge=clickedEdge;
  state.exitEdge=state.revealed?solution.exit:player.exit;
  state.lastClue=clue;
- let target=solution.status==='hole'?'mustaan aukkoon':(solution.status==='same'?'takaisin samaan reunaan':`ulos reunasta ${solution.exit}`);
- let actual=player.status==='hole'?'mustaan aukkoon':(player.status==='same'?'takaisin samaan reunaan':`ulos reunasta ${player.exit}`);
+ let target=solution.status==='hole'?'mustaan aukkoon':(solution.status==='same'?'takaisin lähtöruutuun':`ulos reunasta ${solution.exit}`);
+ let actual=player.status==='hole'?'mustaan aukkoon':(player.status==='same'?'takaisin lähtöruutuun':`ulos reunasta ${player.exit}`);
  if(state.revealed){
   $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje / ratkaisu:</b> ${solution.count} ruutua ${target}.</div><div><b>Reitti:</b> sininen reitti on ratkaisu.</div>`;
  }else{
