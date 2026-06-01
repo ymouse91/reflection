@@ -26,7 +26,6 @@
 <div class="sidePanel">
 <section class="bar menuBar">
 <button class="primary" id="newGame">Uusi</button>
-<button id="checkBtn">Tarkista</button>
 <button id="revealBtn">Ratkaisu</button>
 <button class="danger" id="clearBtn">Tyhjennä</button>
 <button id="helpBtn">Ohje</button>
@@ -143,13 +142,13 @@ function renderBoard(showSolution=state.revealed){let n=state.n,b=$('board');b.s
  }
  let r=gr-1,c=gc-1;el.className='cell';let isLocked=state.locked.has(key(r,c)); if(isLocked)el.classList.add('locked');let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null; if(p){drawPiece(el,p);if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}if(isLocked){let lock=document.createElement('span');lock.className='lockMark';lock.textContent='🔒';el.appendChild(lock)}
  let idx=state.path.findIndex(x=>x[0]===r&&x[1]===c);let sidx=state.solutionPath.findIndex(x=>x[0]===r&&x[1]===c); if(idx>=0&&sidx>=0){el.classList.add('bothPath');el.dataset.step=`${sidx+1}/${idx+1}`;el.dataset.arrow=`${arrow(state.solutionPathDirs[sidx]??0)} ${arrow(state.pathDirs[idx]??0)}`}else if(idx>=0){el.classList.add('path');el.dataset.step=1+idx;el.dataset.arrow=arrow(state.pathDirs[idx]??0)}else if(sidx>=0){el.classList.add('solutionPath');el.dataset.step=1+sidx;el.dataset.arrow=arrow(state.solutionPathDirs[sidx]??0)}
- el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}
+ el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}liveCheck()
 function toggleLock(r,c){let k=key(r,c);state.locked.has(k)?state.locked.delete(k):state.locked.add(k);renderBoard()}
 function place(r,c){
  if(state.locked.has(key(r,c)))return toast('Ruutu on lukittu');
  const cur=state.player[r]?.[c];
  if(cur?.id==='warp')return toast('Light warp on valmiiksi laudalla');
- state.revealed=false;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;
+ state.revealed=false;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;state.selectedEdge=null;state.lastClue=null;$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';
  if(cur){state.player[r][c]=null;state.selected=cur;renderStock();renderBoard();return}
  if(!state.selected)return toast('Ei asetettavia esineitä jäljellä');
  const rem=remainingCounts();
@@ -187,16 +186,16 @@ function showPath(clue){
  let target=solution.status==='hole'?'mustaan aukkoon':(solution.status==='same'?'takaisin samaan reunaan':`ulos reunasta ${solution.exit}`);
  let actual=player.status==='hole'?'mustaan aukkoon':(player.status==='same'?'takaisin samaan reunaan':`ulos reunasta ${player.exit}`);
  if(state.revealed){
-  $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje / ratkaisu:</b> ${solution.count} ruutua ja ${target}.</div><div><b>Reitti:</b> sininen reitti on ratkaisu.</div>`;
+  $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje / ratkaisu:</b> ${solution.count} ruutua ${target}.</div><div><b>Reitti:</b> sininen reitti on ratkaisu.</div>`;
  }else{
   let ok=player.count===solution.count&&player.status===solution.status&&((player.exit||'')===(solution.exit||''));
-  $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje:</b> ${solution.count} ruutua ja ${target}.</div><div><b>Nykyinen lautasi:</b> ${player.count} ruutua ja ${actual}. <span style="color:#1d8f55">Vihreä</span> = nykyisen laudan reitti.</div><div><b>Tulos:</b> ${ok?'Tämä lähtö täsmää.':'Tämä lähtö ei täsmää.'}</div>`;
+  $('rayInfo').innerHTML=`<div><b>Lähtö:</b> ${clickedEdge}</div><div><b>Vihje:</b> ${solution.count} ruutua ${target}.</div><div><b>Nykyinen lautasi:</b> ${player.count} ruutua ${actual}. <span style="color:#1d8f55">Vihreä</span> = nykyisen laudan reitti.</div><div><b>Tulos:</b> ${ok?'Tämä lähtö täsmää.':'Tämä lähtö ei täsmää.'}</div>`;
  }
  renderBoard();
 }
-function check(){let ok=0,total=state.clues.length;for(const cl of state.clues){let t=trace(state.player,cl);if(t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||'')))ok++}let s=$('status');s.textContent=`Täsmää: ${ok}/${total}`;s.className='msg '+(ok===total?'okText':'badText');if(ok===total)toast('Ratkaistu!')}
+function liveCheck(){let ok=0,total=state.clues.length;for(const cl of state.clues){let t=trace(state.player,cl);if(t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||'')))ok++}let s=$('status');if(total===0){s.textContent='';return}let wasTotal=s.dataset.prev==='total';let nowTotal=ok===total;s.dataset.prev=nowTotal?'total':'';s.textContent=nowTotal?'Ratkaistu!':`Täsmää: ${ok}/${total}`;s.className='msg '+(nowTotal?'okText':'badText');if(nowTotal&&!wasTotal)toast('Ratkaistu!')}
 function newGame(){applyMobilePreset();syncItemOptions();state.n=+$('size').value;state.hidden=blank(state.n);state.player=blank(state.n);state.locked.clear();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.selectedEdge=null;state.exitEdge=null;state.lastClue=null;state.revealed=false;setRevealButtonText();state.selected=null;$('status').textContent='';$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';$('stock').innerHTML='';renderBoard();setTimeout(()=>{applyMobilePreset();syncItemOptions();let g=generateBetter();state.hidden=g.board;state.player=initialPlayerBoard();computeClues();renderStock();renderBoard();},20)}
-$('newGame').onclick=newGame;$('size').onchange=syncItemOptions;$('items').onchange=ensureSizeForItems;$('checkBtn').onclick=check;$('helpBtn').onclick=()=>{$('helpModal').classList.remove('hidden')};$('helpClose').onclick=()=>{$('helpModal').classList.add('hidden')};$('helpModal').onclick=e=>{if(e.target===$('helpModal'))$('helpModal').classList.add('hidden')};document.addEventListener('keydown',e=>{if(e.key==='Escape')$('helpModal').classList.add('hidden')});$('clearBtn').onclick=()=>{state.player=clearUnlockedBoard();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.revealed=false;setRevealButtonText();renderStock();renderBoard()};$('revealBtn').onclick=()=>{state.revealed=!state.revealed;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;renderBoard(state.revealed);setRevealButtonText();if(state.lastClue){showPath(state.lastClue)}else{$('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.'}};
+$('newGame').onclick=newGame;$('size').onchange=syncItemOptions;$('items').onchange=ensureSizeForItems;$('helpBtn').onclick=()=>{$('helpModal').classList.remove('hidden')};$('helpClose').onclick=()=>{$('helpModal').classList.add('hidden')};$('helpModal').onclick=e=>{if(e.target===$('helpModal'))$('helpModal').classList.add('hidden')};document.addEventListener('keydown',e=>{if(e.key==='Escape')$('helpModal').classList.add('hidden')});$('clearBtn').onclick=()=>{state.player=clearUnlockedBoard();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.revealed=false;setRevealButtonText();renderStock();renderBoard()};$('revealBtn').onclick=()=>{state.revealed=!state.revealed;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;renderBoard(state.revealed);setRevealButtonText();if(state.lastClue){showPath(state.lastClue)}else{$('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.'}};
 newGame();
 if('serviceWorker' in navigator){
  navigator.serviceWorker.register('./sw.js');
