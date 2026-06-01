@@ -35,7 +35,7 @@
 <label>Ruudukko <select id="size"><option selected>6</option><option>8</option><option>10</option></select></label>
 <label>Esineitä <select id="items"><option selected>8</option><option>10</option><option>12</option></select></label>
 <label><input type="checkbox" id="holes" checked> mustat aukot</label>
-<label><input type="checkbox" id="warps" checked> light warp</label>
+<label><input type="checkbox" id="warps" checked> valoputki</label>
 </section>
 <section class="panel stockPanel">
 <b>Valitse jäljellä oleva esine ja klikkaa ruutua.</b> <br>
@@ -51,7 +51,7 @@
 <div>Valitse esine ja klikkaa ruutua. Uusi klikkaus poistaa esineen. Pitkä painallus tai oikea klikkaus lukitsee ruudun.</div>
 <div>Reunavihjeen numero kertoo, monenko ruudun läpi laser kulkee ennen poistumista, paluuta tai pysähtymistä.</div>
 <div>Vihreä vihje: laser poistuu eri reunaruudusta. Keltainen: laser palaa samaan reunaruutuun. Harmaa: laser päätyy mustaan aukkoon.</div>
-<div>Peilit heijastavat sädettä. Musta aukko pysäyttää säteen. Light warp siirtää säteen toiseen warp-ruutuun samaan suuntaan.</div>
+<div>Peilit heijastavat sädettä. Musta aukko pysäyttää säteen. Valoputki siirtää säteen toiseen valoputkeen samaan suuntaan.</div>
 </div>
 </div>
 </div>
@@ -67,6 +67,13 @@ const PIECES=[
 ];
 const PLACEABLE_IDS=['slash','back','v2','h2','square','hole'];
 const ITEM_OPTIONS_BY_SIZE={6:[8,10,12],8:[10,12,16],10:[12,16,20]};
+const PIECE_MIX_BY_TOTAL={
+ 8:{special:[2,3],holes:[1,1]},
+ 10:{special:[3,3],holes:[1,1]},
+ 12:{special:[3,4],holes:[1,1]},
+ 16:{special:[4,5],holes:[1,2]},
+ 20:{special:[4,6],holes:[1,2]}
+};
 const state={n:6,hidden:[],player:[],clues:[],selected:null,path:[],pathDirs:[],solutionPath:[],solutionPathDirs:[],locked:new Set(),selectedEdge:null,exitEdge:null,lastClue:null,revealed:false};
 const $=id=>document.getElementById(id);
 function mobilePreset(){return window.matchMedia('(max-width:430px)').matches}
@@ -78,6 +85,7 @@ function setRevealButtonText(){$('revealBtn').textContent=state.revealed?'Piilot
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1700)}
 function blank(n){return Array.from({length:n},()=>Array(n).fill(null))}
 function key(r,c){return r+','+c} function inb(r,c,n=state.n){return r>=0&&c>=0&&r<n&&c<n} function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function randInt(a,b){return a+Math.floor(Math.random()*(b-a+1))}
 function cloneBoard(b){return b.map(row=>row.slice())} function piece(id){return PIECES.find(x=>x.id===id)}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function drawPiece(el,p){let s=document.createElement('span');s.className='pieceSymbol '+p.id;s.textContent=p.draw;el.appendChild(s)}
@@ -102,7 +110,18 @@ function trace(board,start){let n=state.n,r=start.r,c=start.c,dir=start.dir,coun
  }}
 function boardSignature(b){return starts(state.n).map(s=>{let t=trace(b,s);return `${t.count}:${t.status}:${t.exit||''}`}).join('|')}
 function hiddenPositions(b=state.hidden){let a=[];for(let r=0;r<state.n;r++)for(let c=0;c<state.n;c++)if(b[r][c])a.push([r,c,b[r][c].id]);return a}
-function makeCandidate(){let n=state.n,total=+$('items').value,b=blank(n);let pool=['slash','back','v2','h2','square']; if($('holes').checked) pool.push('hole');let pos=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)pos.push([r,c]);shuffle(pos);let useWarps=$('warps').checked&&Math.random()<0.5;if(useWarps){for(let i=0;i<2;i++){let [r,c]=pos.pop();b[r][c]=piece('warp')}}for(let i=0;i<total;i++){let [r,c]=pos.pop();b[r][c]=piece(rand(pool))}return b}
+function pieceBag(total){
+ let mix=PIECE_MIX_BY_TOTAL[total]||PIECE_MIX_BY_TOTAL[12],bag=[];
+ let holes=$('holes').checked?randInt(mix.holes[0],mix.holes[1]):0;
+ let special=randInt(mix.special[0],mix.special[1]);
+ special=Math.min(special,total-holes);
+ let square=special>=5?randInt(1,2):(special>=3?1:0);
+ let doubles=special-square,v2=Math.floor(doubles/2),h2=doubles-v2;
+ let diagonals=total-holes-special,slash=Math.ceil(diagonals/2),back=diagonals-slash;
+ for(const [id,count] of [['slash',slash],['back',back],['v2',v2],['h2',h2],['square',square],['hole',holes]])for(let i=0;i<count;i++)bag.push(id);
+ return shuffle(bag);
+}
+function makeCandidate(){let n=state.n,total=+$('items').value,b=blank(n),bag=pieceBag(total);let pos=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)pos.push([r,c]);shuffle(pos);let useWarps=$('warps').checked&&Math.random()<0.5;if(useWarps){for(let i=0;i<2;i++){let [r,c]=pos.pop();b[r][c]=piece('warp')}}for(const id of bag){let [r,c]=pos.pop();b[r][c]=piece(id)}return b}
 function evaluate(b){let sig=boardSignature(b), clues=starts(state.n).map(s=>({...s,...trace(b,s)})), uses=new Map(), turns=0, informative=0, exits=new Set();hiddenPositions(b).forEach(([r,c])=>uses.set(key(r,c),0));
  for(const cl of clues){if(cl.status!=='same'||cl.count>1)informative++; if(cl.exit)exits.add(cl.exit); for(let i=0;i<cl.path.length;i++){let [r,c]=cl.path[i]; if(uses.has(key(r,c)))uses.set(key(r,c),(uses.get(key(r,c))||0)+1)} }
  for(const [r,c,id] of hiddenPositions(b)){if(PLACEABLE_IDS.includes(id)&&id!=='hole'){for(const st of starts(state.n)){let t=trace(b,st); if(t.path.some(x=>x[0]===r&&x[1]===c))turns++}}}
@@ -143,20 +162,21 @@ function renderBoard(showSolution=state.revealed){let n=state.n,b=$('board');b.s
  }
  let r=gr-1,c=gc-1;el.className='cell';let isLocked=state.locked.has(key(r,c)); if(isLocked)el.classList.add('locked');let src=showSolution?state.hidden:state.player;let p=(src[r]&&src[r][c])?src[r][c]:null; if(p){drawPiece(el,p);if(p.id==='hole')el.classList.add('black');if(p.id==='warp')el.classList.add('warp')}if(isLocked){let lock=document.createElement('span');lock.className='lockMark';lock.textContent='🔒';el.appendChild(lock)}
  let idx=state.path.findIndex(x=>x[0]===r&&x[1]===c);let sidx=state.solutionPath.findIndex(x=>x[0]===r&&x[1]===c); if(idx>=0&&sidx>=0){el.classList.add('bothPath');el.dataset.step=`${sidx+1}/${idx+1}`;el.dataset.arrow=`${arrow(state.solutionPathDirs[sidx]??0)} ${arrow(state.pathDirs[idx]??0)}`}else if(idx>=0){el.classList.add('path');el.dataset.step=1+idx;el.dataset.arrow=arrow(state.pathDirs[idx]??0)}else if(sidx>=0){el.classList.add('solutionPath');el.dataset.step=1+sidx;el.dataset.arrow=arrow(state.solutionPathDirs[sidx]??0)}
- el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}liveCheck()
+ el.oncontextmenu=e=>{e.preventDefault();toggleLock(r,c)};let timer=null;el.ontouchstart=()=>{timer=setTimeout(()=>toggleLock(r,c),500)};el.ontouchend=()=>clearTimeout(timer);el.onclick=()=>place(r,c);b.appendChild(el)}}}
 function toggleLock(r,c){let k=key(r,c);state.locked.has(k)?state.locked.delete(k):state.locked.add(k);renderBoard()}
 function place(r,c){
  if(state.locked.has(key(r,c)))return toast('Ruutu on lukittu');
  const cur=state.player[r]?.[c];
- if(cur?.id==='warp')return toast('Light warp on valmiiksi laudalla');
+ if(cur?.id==='warp')return toast('Valoputki on valmiiksi laudalla');
  state.revealed=false;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;state.selectedEdge=null;state.lastClue=null;$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';
- if(cur){state.player[r][c]=null;state.selected=cur;renderStock();renderBoard();return}
+ if(cur){state.player[r][c]=null;state.selected=cur;renderStock();renderBoard();liveCheck();return}
  if(!state.selected)return toast('Ei asetettavia esineitä jäljellä');
  const rem=remainingCounts();
  if((rem[state.selected.id]||0)<=0){renderStock();return toast('Tätä esinettä ei ole jäljellä')}
  state.player[r][c]=state.selected;
  renderStock();
  renderBoard();
+ liveCheck();
 }
 function clearPathInfo(){
  state.path=[];
@@ -195,8 +215,8 @@ function showPath(clue){
  renderBoard();
 }
 function liveCheck(){let ok=0,total=state.clues.length;for(const cl of state.clues){let t=trace(state.player,cl);if(t.count===cl.count&&t.status===cl.status&&((t.exit||'')===(cl.exit||'')))ok++}let s=$('status');if(total===0){s.textContent='';return}let wasTotal=s.dataset.prev==='total';let nowTotal=ok===total;s.dataset.prev=nowTotal?'total':'';s.textContent=nowTotal?'Ratkaistu!':`Täsmää: ${ok}/${total}`;s.className='msg '+(nowTotal?'okText':'badText');if(nowTotal&&!wasTotal)toast('Ratkaistu!')}
-function newGame(){applyMobilePreset();syncItemOptions();state.n=+$('size').value;state.hidden=blank(state.n);state.player=blank(state.n);state.locked.clear();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.selectedEdge=null;state.exitEdge=null;state.lastClue=null;state.revealed=false;setRevealButtonText();state.selected=null;$('status').textContent='';$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';$('stock').innerHTML='';renderBoard();setTimeout(()=>{applyMobilePreset();syncItemOptions();let g=generateBetter();state.hidden=g.board;state.player=initialPlayerBoard();computeClues();renderStock();renderBoard();},20)}
-$('newGame').onclick=newGame;$('size').onchange=syncItemOptions;$('items').onchange=ensureSizeForItems;$('helpBtn').onclick=()=>{$('helpModal').classList.remove('hidden')};$('helpClose').onclick=()=>{$('helpModal').classList.add('hidden')};$('helpModal').onclick=e=>{if(e.target===$('helpModal'))$('helpModal').classList.add('hidden')};document.addEventListener('keydown',e=>{if(e.key==='Escape')$('helpModal').classList.add('hidden')});$('clearBtn').onclick=()=>{state.player=clearUnlockedBoard();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.revealed=false;setRevealButtonText();renderStock();renderBoard()};$('revealBtn').onclick=()=>{state.revealed=!state.revealed;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;renderBoard(state.revealed);setRevealButtonText();if(state.lastClue){showPath(state.lastClue)}else{$('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.'}};
+function newGame(){applyMobilePreset();syncItemOptions();state.n=+$('size').value;state.hidden=blank(state.n);state.player=blank(state.n);state.locked.clear();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.selectedEdge=null;state.exitEdge=null;state.lastClue=null;state.revealed=false;setRevealButtonText();state.selected=null;$('status').textContent='';$('status').dataset.prev='';$('rayInfo').textContent='Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.';$('stock').innerHTML='';renderBoard();setTimeout(()=>{applyMobilePreset();syncItemOptions();let g=generateBetter();state.hidden=g.board;state.player=initialPlayerBoard();computeClues();renderStock();renderBoard();liveCheck();},20)}
+$('newGame').onclick=newGame;$('size').onchange=syncItemOptions;$('items').onchange=ensureSizeForItems;$('helpBtn').onclick=()=>{$('helpModal').classList.remove('hidden')};$('helpClose').onclick=()=>{$('helpModal').classList.add('hidden')};$('helpModal').onclick=e=>{if(e.target===$('helpModal'))$('helpModal').classList.add('hidden')};document.addEventListener('keydown',e=>{if(e.key==='Escape')$('helpModal').classList.add('hidden')});$('clearBtn').onclick=()=>{state.player=clearUnlockedBoard();state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.revealed=false;setRevealButtonText();renderStock();renderBoard();liveCheck()};$('revealBtn').onclick=()=>{state.revealed=!state.revealed;state.path=[];state.pathDirs=[];state.solutionPath=[];state.solutionPathDirs=[];state.exitEdge=null;renderBoard(state.revealed);setRevealButtonText();if(state.lastClue){showPath(state.lastClue)}else{$('rayInfo').textContent=state.revealed?'Ratkaisu näkyy laudalla. Klikkaa reunavihjettä, niin näet ratkaisun mukaisen laserin kulun.':'Klikkaa jotakin reunavihjettä: näet lähtöreunan, poistumisreunan ja laserin kulun nykyisellä laudalla.'}};
 newGame();
 if('serviceWorker' in navigator){
  navigator.serviceWorker.register('./sw.js');
